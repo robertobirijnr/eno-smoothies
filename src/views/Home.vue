@@ -2,11 +2,13 @@
   <div class="home container">
     <div class="card" v-for="smoothie in smoothies" :key="smoothie.id">
       <div class="card-content">
-        <i class="material-icons trash" @click="deleteSmoothie(smoothie.id)">delete</i>
-        <h2 class="indigo-text">{{smoothie.title}}</h2>
+        <i class="material-icons trash" @click="deleteSmoothie(smoothie.id)"
+          >delete</i
+        >
+        <h2 class="indigo-text">{{ smoothie.title }}</h2>
         <div class="ingredients">
           <li v-for="(ing, index) in smoothie.ingredients" :key="index">
-            <span class="chip">{{ing}}</span>
+            <span class="chip">{{ ing }}</span>
           </li>
         </div>
       </div>
@@ -15,32 +17,36 @@
 </template>
 
 <script>
+import db from "@/firebase/init";
 export default {
   name: "Home",
   data() {
     return {
-      smoothies: [
-        {
-          title: "Ninja Brew",
-          slug: "nonja-brew",
-          ingredients: ["banana", "coffe", "milk", "yoghurt"],
-          id: "1",
-        },
-        {
-          title: "Morning Mood",
-          slug: "morning-mood",
-          ingredients: ["mamgo", "lime", "juice"],
-          id: "2",
-        },
-      ],
+      smoothies: [],
     };
   },
   methods: {
     deleteSmoothie(id) {
-      this.smoothies = this.smoothies.filter((smoothie) => {
-        return smoothie.id != id;
-      });
+      db.collection("smoothies")
+        .doc(id)
+        .delete()
+        .then(() => {
+          this.smoothies = this.smoothies.filter((smoothie) => {
+            return smoothie.id != id;
+          });
+        });
     },
+  },
+  created() {
+    db.collection("smoothies")
+      .get()
+      .then((snapshot) => {
+        snapshot.forEach((doc) => {
+          let smoothie = doc.data();
+          smoothie.id = doc.id;
+          this.smoothies.push(smoothie);
+        });
+      });
   },
 };
 </script>
@@ -76,4 +82,3 @@ h2 {
   font-size: 1.4em;
 }
 </style>
-
