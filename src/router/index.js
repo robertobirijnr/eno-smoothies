@@ -13,6 +13,12 @@ const routes = [{
     path: '/add-smoothie',
     name: 'AddSmoothie',
     component: () => import('@/components/AddSmoothie')
+  },
+  {
+    path: '/edit-smoothie/:slug',
+    name: 'editSmoothie',
+    component: () => import('@/components/editSmoothie')
+
   }
 ]
 
